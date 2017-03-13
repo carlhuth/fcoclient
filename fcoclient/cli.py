@@ -107,7 +107,7 @@ class Config(dict):
             if fail_on_missing:
                 fail("File {} is missing", path)
             data = {}  # Missing file simply means no settings are present yet
-        except:
+        except json.decoder.JSONDecodeError:
             fail("File {} is not valid JSON", path)
         return Config(data)
 
