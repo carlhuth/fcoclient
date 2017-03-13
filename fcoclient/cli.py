@@ -229,7 +229,7 @@ def create_parser():
     subparsers = parser.add_subparsers()
 
     commands = inspect.getmembers(sys.modules[__name__], is_command)
-    for _, cls in commands:
+    for _, cls in sorted(commands, key=lambda x: x[0]):
         sub = cls.add_subparser(subparsers)
         sub.set_defaults(cls=cls)
 
