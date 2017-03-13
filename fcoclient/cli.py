@@ -151,7 +151,8 @@ class Configure(Command):
     def __init__(self, config_path):
         pass  # Prevent client from being constructed
 
-    def configure(self, args):
+    @staticmethod
+    def configure(args):
         LOGGER.info("Configuring client")
         config = Config.load_from_file(args.config, fail_on_missing=False)
         config["url"] = args.url
