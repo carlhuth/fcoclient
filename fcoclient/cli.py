@@ -118,6 +118,21 @@ class Command(object):
     def add_subparser(subparsers):
         raise NotImplementedError("Command is an abstract class")
 
+    @staticmethod
+    def create_list_parser(subparsers, item_names):
+        parser = subparsers.add_parser("list",
+                                       help="List {}".format(item_names))
+        parser.add_argument("-n", "--no-items", type=int, default=100,
+                            help="Number of {} to display".format(item_names))
+        return parser
+
+    @staticmethod
+    def create_get_parser(subparsers, item_name):
+        msg = "Get details about selected {}".format(item_name)
+        parser = subparsers.add_parser("get", help=msg)
+        parser.add_argument("uuid", help="UUID of the {}".format(item_name))
+        return parser
+
     def __init__(self, config_path):
         self.client = Client(**Config.load_from_file(config_path))
 
@@ -154,14 +169,10 @@ class Offer(Command):
         parser = subparsers.add_parser("offer", help="Inspect product offers")
         subs = parser.add_subparsers()
 
-        sub = subs.add_parser("list", help="List product offers")
-        sub.add_argument("-n", "--no-items", type=int, default=100,
-                         help="Numbr of offers to display")
+        Command.create_get_parser(subs, "product offer")
+        sub = Command.create_list_parser(subs, "product offers")
         sub.add_argument("-t", "--type",
                          help="Only display offers for associated type")
-
-        sub = subs.add_parser("get", help="Get details about selected offer")
-        sub.add_argument("uuid", help="Offer UUID")
 
         return parser
 
