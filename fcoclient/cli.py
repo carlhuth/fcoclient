@@ -80,14 +80,18 @@ class Config(dict):
 
     valid_keys = {"url", "username", "customer", "password", "verify"}
 
-    def __init__(self, data={}):
+    def __init__(self, data=None, **rest):
         invalid = [k for k in data.keys() if k not in self.valid_keys]
         if len(invalid) != 0:
             fail("Invalid settings key(s) found: {}", ",".join(invalid))
 
+        if data is None:
+            data = rest
+        else:
+            data.update(rest)
         # TODO: Fix this as soon as possible!!!
-        self["verify"] = False
-        self.update(data)
+        data["verify"] = False
+        super(Config, self).__init__(data)
 
     def save(self, path):
         with open(path, "w") as f:
