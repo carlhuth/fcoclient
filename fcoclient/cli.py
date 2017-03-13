@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Command line interface for FCO client.
+"""
+
 from __future__ import print_function
 
 import argparse
@@ -23,27 +27,30 @@ import sys
 
 from fcoclient.client import Client
 
-# Logging
-fmt_stream = logging.Formatter("[%(levelname)s] - %(message)s")
-handler_stream = logging.StreamHandler()
-handler_stream.setFormatter(fmt_stream)
-handler_stream.setLevel(logging.INFO)
 
-fmt_file = logging.Formatter(
-    "%(asctime)s %(name)s:%(lineno)s [%(levelname)s] - %(message)s"
-)
-handler_file = logging.FileHandler(".fco.log")
-handler_file.setFormatter(fmt_file)
-handler_file.setLevel(logging.DEBUG)
+def _configure_logging():
+    fmt_stream = logging.Formatter("[%(levelname)s] - %(message)s")
+    handler_stream = logging.StreamHandler()
+    handler_stream.setFormatter(fmt_stream)
+    handler_stream.setLevel(logging.INFO)
 
-logger = logging.getLogger("fcoclient")
-logger.addHandler(handler_stream)
-logger.addHandler(handler_file)
-logger.setLevel(logging.DEBUG)
+    fmt_file = logging.Formatter(
+        "%(asctime)s %(name)s:%(lineno)s [%(levelname)s] - %(message)s"
+    )
+    handler_file = logging.FileHandler(".fco.log")
+    handler_file.setFormatter(fmt_file)
+    handler_file.setLevel(logging.DEBUG)
+
+    log = logging.getLogger("fcoclient")
+    log.addHandler(handler_stream)
+    log.addHandler(handler_file)
+    log.setLevel(logging.DEBUG)
+
+    return log
 
 
 def fail(msg, *args):
-    logger.error(msg.format(*args))
+    LOGGER.error(msg.format(*args))
     sys.exit(1)
 
 
@@ -126,14 +133,14 @@ class Configure(Command):
         pass  # Prevent client from being constructed
 
     def configure(self, args):
-        logger.info("Configuring client")
+        LOGGER.info("Configuring client")
         config = Config.load_from_file(args.config, fail_on_missing=False)
         config["url"] = args.url
         config["username"] = args.username
         config["customer"] = args.customer
         config["password"] = args.password
         config.save(args.config)
-        logger.info("Client configured")
+        LOGGER.info("Client configured")
 
 
 class Offer(Command):
@@ -155,19 +162,19 @@ class Offer(Command):
         return parser
 
     def list(self, args):
-        logger.info("Listing product offers")
+        LOGGER.info("Listing product offers")
         conditions = {}
         if args.type is not None:
             conditions["productAssociatedType"] = args.type
         for po in self.client.product_offer.list(args.no_items, **conditions):
             print("{}: {} ({})".format(po["productAssociatedType"], po.name,
                                        po.uuid))
-        logger.info("Offers listed")
+        LOGGER.info("Offers listed")
 
     def get(self, args):
-        logger.info("Getting product offer details")
+        LOGGER.info("Getting product offer details")
         display(self.client.product_offer.get(uuid=args.uuid))
-        logger.info("Product offer details retrieved")
+        LOGGER.info("Product offer details retrieved")
 
 
 def create_parser():
@@ -193,3 +200,6 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
     getattr(args.cls(args.config), args.command)(args)
+
+
+LOGGER = _configure_logging()
