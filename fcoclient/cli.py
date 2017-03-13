@@ -193,6 +193,30 @@ class Offer(Command):
         LOGGER.info("Product offer details retrieved")
 
 
+class Disk(Command):
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("disk", help="Manage disks")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "disk")
+        Command.create_list_parser(subs, "disks")
+
+        return parser
+
+    def list(self, args):
+        LOGGER.info("Listing disks")
+        for disk in self.client.disk.list(args.no_items):
+            print("{} ({})".format(disk.name, disk.uuid))
+        LOGGER.info("Disks listed")
+
+    def get(self, args):
+        LOGGER.info("Getting disk details")
+        display(self.client.disk.get(uuid=args.uuid))
+        LOGGER.info("Disk details retrieved")
+
+
 def create_parser():
     def is_command(item):
         return (inspect.isclass(item) and item != Command and

@@ -21,6 +21,7 @@ import requests
 
 from fcoclient import exceptions
 
+from fcoclient.disk import DiskClient
 from fcoclient.product_offer import ProductOfferClient
 
 
@@ -149,4 +150,5 @@ class Client(object):
         """
         client = APIClient(username, customer, password, url, verify)
 
+        self.disk = DiskClient(client)
         self.product_offer = ProductOfferClient(client)
