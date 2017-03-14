@@ -265,6 +265,31 @@ class JobCmd(Command):
         LOGGER.info("Job details retrieved")
 
 
+class VdcCmd(Command):
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("vdc",
+                                       help="Inspect virtual data centers")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "virtual data center")
+        Command.create_list_parser(subs, "virtual data centers")
+
+        return parser
+
+    def list(self, args):
+        LOGGER.info("Listing virtual data centers")
+        for vdc in self.client.vdc.list(args.no_items):
+            print("{} ({})".format(vdc.name, vdc.uuid))
+        LOGGER.info("Virtual data centers listed")
+
+    def get(self, args):
+        LOGGER.info("Getting virtual data center details")
+        display(self.client.vdc.get(uuid=args.uuid))
+        LOGGER.info("Virtual data center details retrieved")
+
+
 def create_parser():
     def is_command(item):
         return (inspect.isclass(item) and item != Command and
