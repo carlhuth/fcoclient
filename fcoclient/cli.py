@@ -149,6 +149,13 @@ class Command(object):
                             help="Skeleton file")
         return parser
 
+    @staticmethod
+    def create_delete_parser(subparsers, item_name):
+        msg = "Delete {}".format(item_name)
+        parser = subparsers.add_parser("delete", help=msg)
+        parser.add_argument("uuid", help="UUID of the {}".format(item_name))
+        return parser
+
     def __init__(self, config_path):
         self.client = Client(**Config.load_from_file(config_path))
 

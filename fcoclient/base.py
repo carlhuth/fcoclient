@@ -173,6 +173,27 @@ class BaseClient(object):
         args = ["{REPLACE_ME}"] * self.klass.skeleton_args
         return self.klass(*args)
 
+    def delete(self, resource_uuid, cascade=False):
+        """
+        Schedule deletion of selected resource.
+
+        Most of the operations on FCO are asynchronous and delete is no
+        exception. Calling this method will schedule deletion of selected
+        resource and return a :obj:`Job` resource that can be used to query
+        deleted resource state.
+
+        Args:
+            resource_uuid (str): UUID of the resource being deleted.
+            cascade (bool): Control whether child resources are also deleted
+                or not.
+
+        Returns:
+            :obj:`Job` resource describing status of the resource.
+        """
+        endpoint = "{}/{}".format(self.endpoint, resource_uuid)
+        data = {"cascade": cascade}
+        return Job(self.client.delete(endpoint, data, codes.accepted))
+
 
 @enum.unique
 class JobStatus(enum.Enum):
@@ -234,3 +255,20 @@ class JobClient(BaseClient):
             time.sleep(3)
             job = self.get(uuid=job.uuid)
         return job
+
+    def delete(self, job_uuid, cascade=True):
+        """
+        Delete job.
+
+        Job is deleted synchronously and thus needs it's own delete
+        implementation.
+
+        Args:
+            job_uuid (str): UUID of the job being deleted.
+            cascade (bool): Control whether child resources are also deleted
+                or not. This parameter is ignored and set to ``False``
+                unconditionally.
+        """
+        endpoint = "{}/{}".format(self.endpoint, job_uuid)
+        data = {"cascade": False}
+        self.client.delete(endpoint, data, codes.ok)
