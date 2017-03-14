@@ -133,6 +133,14 @@ class Command(object):
         parser.add_argument("uuid", help="UUID of the {}".format(item_name))
         return parser
 
+    @staticmethod
+    def create_skeleton_parser(subparsers, item_name):
+        msg = "Create {} skeleton".format(item_name)
+        parser = subparsers.add_parser("skeleton", help=msg)
+        parser.add_argument("-o", "--output", type=argparse.FileType("w"),
+                            default=sys.stdout, help="Output file")
+        return parser
+
     def __init__(self, config_path):
         self.client = Client(**Config.load_from_file(config_path))
 

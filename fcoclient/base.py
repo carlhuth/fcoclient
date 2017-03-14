@@ -30,6 +30,7 @@ class Resource(dict):
     """
 
     resource_type = None
+    skeleton_args = None
 
     @property
     def uuid(self):
@@ -151,3 +152,20 @@ class BaseClient(object):
         elif len(data) < 1:
             raise exceptions.NoSuchResourceError(conditions)
         return data[0]
+
+    def skeleton(self):
+        """
+        Produce resource skeleton object.
+
+        Skeletons are bare bones resources that have only bare minimum of
+        parameters set in order to be fully functional. These skeletons are
+        used in resource creation process.
+
+        In order to make this skeleton useful, ``{REPLACE_ME}`` placeholders
+        need to be replaced by actual, valid data from FCO.
+
+        Returns:
+            Skeleton object for resource that client handles.
+        """
+        args = ["{REPLACE_ME}"] * self.klass.skeleton_args
+        return self.klass(*args)
