@@ -141,6 +141,14 @@ class Command(object):
                             default=sys.stdout, help="Output file")
         return parser
 
+    @staticmethod
+    def create_new_parser(subparsers, item_name):
+        msg = "Create new {}".format(item_name)
+        parser = subparsers.add_parser("new", help=msg)
+        parser.add_argument("skeleton", type=argparse.FileType("r"),
+                            help="Skeleton file")
+        return parser
+
     def __init__(self, config_path):
         self.client = Client(**Config.load_from_file(config_path))
 
@@ -211,6 +219,7 @@ class DiskCmd(Command):
         Command.create_get_parser(subs, "disk")
         Command.create_list_parser(subs, "disks")
         Command.create_skeleton_parser(subs, "disk")
+        Command.create_new_parser(subs, "disk")
 
         return parser
 
@@ -229,6 +238,12 @@ class DiskCmd(Command):
         LOGGER.info("Generating disk skeleton")
         display(self.client.disk.skeleton())
         LOGGER.info("Done generating disk skeleton")
+
+    def new(self, args):
+        LOGGER.info("Creating new disk")
+        skeleton = json.load(args.skeleton)
+        display(self.client.disk.create(skeleton))
+        LOGGER.info("Disk creation scheduled")
 
 
 class JobCmd(Command):

@@ -17,7 +17,8 @@
 Module with disk related functionality.
 """
 
-from fcoclient.base import BaseClient, Resource
+from requests import codes
+from fcoclient.base import BaseClient, Resource, Job
 
 
 class Disk(Resource):
@@ -62,3 +63,19 @@ class DiskClient(BaseClient):
     """
 
     klass = Disk
+
+    def create(self, skeleton):
+        """
+        Create new disk.
+
+        Disk creation is asynchronous operation and needs to be tracked using
+        job object that is returned.
+
+        Args:
+            skeleton (:obj:`Disk`): Disk skeleton.
+
+        Returns:
+           :obj:`Job`: New job, describing creation progress.
+        """
+        data = {"skeletonDisk": skeleton}
+        return Job(self.client.post(self.endpoint, data, codes.accepted))
