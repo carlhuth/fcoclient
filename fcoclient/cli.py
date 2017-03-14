@@ -227,6 +227,7 @@ class DiskCmd(Command):
         Command.create_list_parser(subs, "disks")
         Command.create_skeleton_parser(subs, "disk")
         Command.create_new_parser(subs, "disk")
+        Command.create_delete_parser(subs, "disk")
 
         return parser
 
@@ -251,6 +252,11 @@ class DiskCmd(Command):
         skeleton = json.load(args.skeleton)
         display(self.client.disk.create(skeleton))
         LOGGER.info("Disk creation scheduled")
+
+    def delete(self, args):
+        LOGGER.info("Deleting disk")
+        display(self.client.disk.delete(args.uuid))
+        LOGGER.info("Disk deletion scheduled")
 
 
 class JobCmd(Command):
