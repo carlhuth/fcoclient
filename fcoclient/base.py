@@ -19,6 +19,9 @@ Module with base types.
 Classes in this module serve as a base for all other resources and clients.
 """
 
+import enum
+import time
+
 from requests import codes
 
 from fcoclient import exceptions
@@ -171,6 +174,34 @@ class BaseClient(object):
         return self.klass(*args)
 
 
+@enum.unique
+class JobStatus(enum.Enum):
+    """
+    Enumeration with different statuses available for jobs.
+    """
+
+    cancelled = "CANCELLED"
+    failed = "FAILED"
+    in_progress = "IN_PROGRESS"
+    not_started = "NOT_STARTED"
+    successful = "SUCCESSFUL"
+    suspended = "SUSPENDED"
+    waiting = "WAITING"
+
+    @property
+    def is_terminal(self):
+        return self in (JobStatus.cancelled, JobStatus.failed,
+                        JobStatus.successful)
+
+    @property
+    def marks_success(self):
+        return self == JobStatus.successful
+
+    @property
+    def marks_failure(self):
+        return self in (JobStatus.cancelled, JobStatus.failed)
+
+
 class Job(Resource):
     """
     Job resource.
@@ -184,6 +215,10 @@ class Job(Resource):
 
     resource_type = "JOB"
 
+    @property
+    def status(self):
+        return JobStatus(self["status"])
+
 
 class JobClient(BaseClient):
     """
@@ -193,3 +228,9 @@ class JobClient(BaseClient):
     """
 
     klass = Job
+
+    def wait(self, job):
+        while not job.status.is_terminal:
+            time.sleep(3)
+            job = self.get(uuid=job.uuid)
+        return job
