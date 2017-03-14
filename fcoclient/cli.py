@@ -105,7 +105,8 @@ class Config(dict):
                 data = json.load(f)
         except IOError:
             if fail_on_missing:
-                fail("File {} is missing", path)
+                msg = "File {} is missing. Try running configure command."
+                fail(msg, path)
             data = {}  # Missing file simply means no settings are present yet
         except json.decoder.JSONDecodeError:
             fail("File {} is not valid JSON", path)
