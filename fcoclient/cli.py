@@ -145,7 +145,7 @@ class Command(object):
         self.client = Client(**Config.load_from_file(config_path))
 
 
-class Configure(Command):
+class ConfigureCmd(Command):
 
     @staticmethod
     def add_subparser(subparsers):
@@ -171,7 +171,7 @@ class Configure(Command):
         LOGGER.info("Client configured")
 
 
-class Offer(Command):
+class OfferCmd(Command):
 
     @staticmethod
     def add_subparser(subparsers):
@@ -201,7 +201,7 @@ class Offer(Command):
         LOGGER.info("Product offer details retrieved")
 
 
-class Disk(Command):
+class DiskCmd(Command):
 
     @staticmethod
     def add_subparser(subparsers):
