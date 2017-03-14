@@ -26,6 +26,34 @@ class Disk(Resource):
     """
 
     resource_type = "DISK"
+    skeleton_args = 4
+
+    def __init__(self, productOfferUUID, resourceName, size, vdcUUID, **rest):
+        """
+        Create new disk resource.
+
+        Detailed description of available fields can be found at Disk_ docs.
+
+        .. _DISK: http://docs.flexiant.com/display/DOCS/REST+Disk
+
+        Args:
+            productOfferUUID: UUID of the offer
+            resourceName: Name of new disk
+            size (int): Disk size (in GB)
+            vdcUUID: UUID of the VDC where disk will reside
+            **rest: Additional skeleton fields
+        """
+        super(Disk, self).__init__({
+            "productOfferUUID": productOfferUUID,
+            "resourceName": resourceName,
+            "size": size,
+            "storageCapabilities": [
+                "CLONE",
+                "CHILDREN_PERSIST_ON_DELETE",
+                "CHILDREN_PERSIST_ON_REVERT"
+            ],
+            "vdcUUID": vdcUUID,
+        }, **rest)
 
 
 class DiskClient(BaseClient):

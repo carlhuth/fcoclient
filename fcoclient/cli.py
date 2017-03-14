@@ -210,6 +210,7 @@ class Disk(Command):
 
         Command.create_get_parser(subs, "disk")
         Command.create_list_parser(subs, "disks")
+        Command.create_skeleton_parser(subs, "disk")
 
         return parser
 
@@ -223,6 +224,11 @@ class Disk(Command):
         LOGGER.info("Getting disk details")
         display(self.client.disk.get(uuid=args.uuid))
         LOGGER.info("Disk details retrieved")
+
+    def skeleton(self, args):
+        LOGGER.info("Generating disk skeleton")
+        display(self.client.disk.skeleton())
+        LOGGER.info("Done generating disk skeleton")
 
 
 def create_parser():
