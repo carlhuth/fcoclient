@@ -335,6 +335,21 @@ class VdcCmd(Command):
         return parser
 
 
+class ServerCmd(Command):
+
+    resource = "server"
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("server", help="Manage servers")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "server")
+        Command.create_list_parser(subs, "servers")
+
+        return parser
+
+
 def create_parser():
     def is_command(item):
         return (inspect.isclass(item) and item != Command and

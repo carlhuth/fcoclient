@@ -24,6 +24,7 @@ from fcoclient import exceptions
 from fcoclient.base import JobClient
 from fcoclient.disk import DiskClient
 from fcoclient.product_offer import ProductOfferClient
+from fcoclient.server import ServerClient
 from fcoclient.vdc import VdcClient
 
 
@@ -155,4 +156,5 @@ class Client(object):
         self.disk = DiskClient(client)
         self.job = JobClient(client)
         self.product_offer = ProductOfferClient(client)
+        self.server = ServerClient(client)
         self.vdc = VdcClient(client)
