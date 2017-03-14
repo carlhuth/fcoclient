@@ -55,7 +55,7 @@ def fail(msg, *args):
 
 
 def display(item):
-    print(json.dumps(item, indent=2))
+    print(json.dumps(item, indent=2, sort_keys=True))
 
 
 class ArgParser(argparse.ArgumentParser):
