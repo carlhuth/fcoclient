@@ -160,6 +160,8 @@ class Command(object):
         parser = subparsers.add_parser("new", help=msg)
         parser.add_argument("skeleton", type=argparse.FileType("r"),
                             help="Skeleton file")
+        parser.add_argument("-w", "--wait", action="store_true",
+                            help="Wait for creation to terminate")
         return parser
 
     @staticmethod
@@ -167,6 +169,8 @@ class Command(object):
         msg = "Delete {}".format(item_name)
         parser = subparsers.add_parser("delete", help=msg)
         parser.add_argument("uuid", help="UUID of the {}".format(item_name))
+        parser.add_argument("-w", "--wait", action="store_true",
+                            help="Wait for deletion to terminate")
         return parser
 
     def __init__(self, config_path):
@@ -264,13 +268,27 @@ class DiskCmd(Command):
     def new(self, args):
         LOGGER.info("Creating new disk")
         skeleton = json.load(args.skeleton)
-        display(self.client.disk.create(skeleton))
-        LOGGER.info("Disk creation scheduled")
+        job = self.client.disk.create(skeleton)
+        if args.wait:
+            LOGGER.info("Waiting for disk creation to terminate")
+            job = self.client.job.wait(job)
+            display(job)
+            LOGGER.info("Disk creation terminated")
+        else:
+            display(job)
+            LOGGER.info("Disk creation scheduled")
 
     def delete(self, args):
         LOGGER.info("Deleting disk")
-        display(self.client.disk.delete(args.uuid))
-        LOGGER.info("Disk deletion scheduled")
+        job = self.client.disk.delete(args.uuid)
+        if args.wait:
+            LOGGER.info("Waiting for disk deletion to terminate")
+            job = self.client.job.wait(job)
+            display(job)
+            LOGGER.info("Disk deletion terminated")
+        else:
+            display(job)
+            LOGGER.info("Disk deletion scheduled")
 
 
 class JobCmd(Command):
