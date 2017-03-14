@@ -231,6 +231,40 @@ class DiskCmd(Command):
         LOGGER.info("Done generating disk skeleton")
 
 
+class JobCmd(Command):
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("job",
+                                       help="Inspect jobs")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "job")
+        sub = Command.create_list_parser(subs, "jobs")
+        sub.add_argument("-f", "--filter", action="append",
+                         help="Only display jobs matching filter")
+
+        return parser
+
+    def list(self, args):
+        LOGGER.info("Listing jobs")
+        conditions = {}
+        if args.filter is not None:
+            try:
+                conditions = dict((f.split("=", 1) for f in args.filter))
+            except ValueError:
+                fail("Malformed filter. Must be in key=value form.")
+
+        for job in self.client.job.list(args.no_items, **conditions):
+            print("{} ({})".format(job["itemDescription"], job.uuid))
+        LOGGER.info("Jobs listed")
+
+    def get(self, args):
+        LOGGER.info("Getting job details")
+        display(self.client.job.get(uuid=args.uuid))
+        LOGGER.info("Job details retrieved")
+
+
 def create_parser():
     def is_command(item):
         return (inspect.isclass(item) and item != Command and

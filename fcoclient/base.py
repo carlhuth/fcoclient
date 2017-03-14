@@ -169,3 +169,27 @@ class BaseClient(object):
         """
         args = ["{REPLACE_ME}"] * self.klass.skeleton_args
         return self.klass(*args)
+
+
+class Job(Resource):
+    """
+    Job resource.
+
+    Job resources are returned when asynchronous operation is started on FCO
+    (for example, server creation or deletion). More information about job
+    objects can be found on `FCO's job page`_.
+
+    .. _`FCO's job page`: http://docs.flexiant.com/display/DOCS/REST+Job
+    """
+
+    resource_type = "JOB"
+
+
+class JobClient(BaseClient):
+    """
+    Job client.
+
+    This class groups all operations that can be executed on jobs.
+    """
+
+    klass = Job
