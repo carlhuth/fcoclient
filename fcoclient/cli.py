@@ -124,7 +124,20 @@ class Command(object):
                                        help="List {}".format(item_names))
         parser.add_argument("-n", "--no-items", type=int, default=100,
                             help="Number of {} to display".format(item_names))
+        parser.add_argument(
+            "-f", "--filter", action="append",
+            help="Only display {} matching filter".format(item_names)
+        )
         return parser
+
+    @staticmethod
+    def parse_filter(filter_conditions):
+        if filter_conditions is None:
+            return {}
+        try:
+            return dict(f.split("=", 1) for f in filter_conditions)
+        except ValueError:
+            fail("Malformed filter. Must be in key=value form.")
 
     @staticmethod
     def create_get_parser(subparsers, item_name):
@@ -233,7 +246,8 @@ class DiskCmd(Command):
 
     def list(self, args):
         LOGGER.info("Listing disks")
-        for disk in self.client.disk.list(args.no_items):
+        conditions = self.parse_filter(args.filter)
+        for disk in self.client.disk.list(args.no_items, **conditions):
             print("{} ({})".format(disk.name, disk.uuid))
         LOGGER.info("Disks listed")
 
@@ -268,21 +282,13 @@ class JobCmd(Command):
         subs = parser.add_subparsers()
 
         Command.create_get_parser(subs, "job")
-        sub = Command.create_list_parser(subs, "jobs")
-        sub.add_argument("-f", "--filter", action="append",
-                         help="Only display jobs matching filter")
+        Command.create_list_parser(subs, "jobs")
 
         return parser
 
     def list(self, args):
         LOGGER.info("Listing jobs")
-        conditions = {}
-        if args.filter is not None:
-            try:
-                conditions = dict((f.split("=", 1) for f in args.filter))
-            except ValueError:
-                fail("Malformed filter. Must be in key=value form.")
-
+        conditions = self.parse_filter(args.filter)
         for job in self.client.job.list(args.no_items, **conditions):
             print("{} ({})".format(job["itemDescription"], job.uuid))
         LOGGER.info("Jobs listed")
