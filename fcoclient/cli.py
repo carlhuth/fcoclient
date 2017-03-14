@@ -115,6 +115,8 @@ class Config(dict):
 
 class Command(object):
 
+    resource = None
+
     @staticmethod
     def add_subparser(subparsers):
         raise NotImplementedError("Command is an abstract class")
@@ -177,6 +179,26 @@ class Command(object):
     def __init__(self, config_path):
         self.client = Client(**Config.load_from_file(config_path))
 
+    def list(self, args):
+        LOGGER.info("Listing items")
+        conditions = self.parse_filter(args.filter)
+        resource_client = getattr(self.client, self.resource)
+        for item in resource_client.list(args.no_items, **conditions):
+            print("{} ({})".format(item.name, item.uuid))
+        LOGGER.info("Items listed")
+
+    def get(self, args):
+        LOGGER.info("Getting item details")
+        resource_client = getattr(self.client, self.resource)
+        display(resource_client.get(uuid=args.uuid))
+        LOGGER.info("Item details retrieved")
+
+    def skeleton(self, args):
+        LOGGER.info("Generating item skeleton")
+        resource_client = getattr(self.client, self.resource)
+        display(resource_client.skeleton())
+        LOGGER.info("Done generating item skeleton")
+
 
 class ConfigureCmd(Command):
 
@@ -206,6 +228,8 @@ class ConfigureCmd(Command):
 
 class OfferCmd(Command):
 
+    resource = "product_offer"
+
     @staticmethod
     def add_subparser(subparsers):
         parser = subparsers.add_parser("offer", help="Inspect product offers")
@@ -228,13 +252,10 @@ class OfferCmd(Command):
                                        po.uuid))
         LOGGER.info("Offers listed")
 
-    def get(self, args):
-        LOGGER.info("Getting product offer details")
-        display(self.client.product_offer.get(uuid=args.uuid))
-        LOGGER.info("Product offer details retrieved")
-
 
 class DiskCmd(Command):
+
+    resource = "disk"
 
     @staticmethod
     def add_subparser(subparsers):
@@ -248,23 +269,6 @@ class DiskCmd(Command):
         Command.create_delete_parser(subs, "disk")
 
         return parser
-
-    def list(self, args):
-        LOGGER.info("Listing disks")
-        conditions = self.parse_filter(args.filter)
-        for disk in self.client.disk.list(args.no_items, **conditions):
-            print("{} ({})".format(disk.name, disk.uuid))
-        LOGGER.info("Disks listed")
-
-    def get(self, args):
-        LOGGER.info("Getting disk details")
-        display(self.client.disk.get(uuid=args.uuid))
-        LOGGER.info("Disk details retrieved")
-
-    def skeleton(self, args):
-        LOGGER.info("Generating disk skeleton")
-        display(self.client.disk.skeleton())
-        LOGGER.info("Done generating disk skeleton")
 
     def new(self, args):
         LOGGER.info("Creating new disk")
@@ -294,6 +298,8 @@ class DiskCmd(Command):
 
 class JobCmd(Command):
 
+    resource = "job"
+
     @staticmethod
     def add_subparser(subparsers):
         parser = subparsers.add_parser("job",
@@ -312,13 +318,10 @@ class JobCmd(Command):
             print("{} ({})".format(job["itemDescription"], job.uuid))
         LOGGER.info("Jobs listed")
 
-    def get(self, args):
-        LOGGER.info("Getting job details")
-        display(self.client.job.get(uuid=args.uuid))
-        LOGGER.info("Job details retrieved")
-
 
 class VdcCmd(Command):
+
+    resource = "vdc"
 
     @staticmethod
     def add_subparser(subparsers):
@@ -330,17 +333,6 @@ class VdcCmd(Command):
         Command.create_list_parser(subs, "virtual data centers")
 
         return parser
-
-    def list(self, args):
-        LOGGER.info("Listing virtual data centers")
-        for vdc in self.client.vdc.list(args.no_items):
-            print("{} ({})".format(vdc.name, vdc.uuid))
-        LOGGER.info("Virtual data centers listed")
-
-    def get(self, args):
-        LOGGER.info("Getting virtual data center details")
-        display(self.client.vdc.get(uuid=args.uuid))
-        LOGGER.info("Virtual data center details retrieved")
 
 
 def create_parser():
