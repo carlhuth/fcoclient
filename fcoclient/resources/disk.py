@@ -18,7 +18,9 @@ Module with disk related functionality.
 """
 
 from requests import codes
-from fcoclient.base import BaseClient, Resource, Job
+
+from fcoclient.resources.base import BaseClient, Resource, ResourceType
+from fcoclient.resources.job import Job
 
 
 class Disk(Resource):
@@ -26,8 +28,15 @@ class Disk(Resource):
     Class representing disk resource."
     """
 
-    resource_type = "DISK"
-    skeleton_args = 4
+    resource_type = ResourceType.disk
+
+    @staticmethod
+    def skeleton():
+        """
+        Create disk skeleton.
+        """
+        return Disk("{DISK PRODUCT OFFER UUID}", "{DISK NAME}",
+                    "{SIZE (int, in GB)}", "{VDC UUID}")
 
     def __init__(self, productOfferUUID, resourceName, size, vdcUUID, **rest):
         """

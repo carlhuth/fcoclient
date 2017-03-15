@@ -20,11 +20,24 @@ Classes in this module serve as a base for all other resources and clients.
 """
 
 import enum
-import time
 
 from requests import codes
 
 from fcoclient import exceptions
+
+
+@enum.unique
+class ResourceType(enum.Enum):
+    """
+    Enumeration with available resource types.
+    """
+
+    any = "ANY"
+    disk = "DISK"
+    job = "JOB"
+    productoffer = "PRODUCTOFFER"
+    server = "SERVER"
+    vdc = "VDC"
 
 
 class Resource(dict):
@@ -32,8 +45,7 @@ class Resource(dict):
     Resource is simple data container with few additional helpers.
     """
 
-    resource_type = None
-    skeleton_args = None
+    resource_type = ResourceType.any
 
     @property
     def uuid(self):
@@ -63,7 +75,7 @@ class Resource(dict):
         return {reps.get(k, k): v for k, v in data.items()}
 
     def __str__(self):
-        return "{}({})".format(self.resource_type, self.uuid)
+        return "{}({})".format(self.resource_type.name, self.uuid)
 
 
 class BaseClient(object):
@@ -103,10 +115,11 @@ class BaseClient(object):
     def __init__(self, client):
         assert self.klass is not None, \
             "'klass' not set for '{}'.".format(self.__class__)
-        assert self.klass.resource_type is not None, \
+        assert self.klass.resource_type != ResourceType.any, \
             "'resource_type' not set for '{}'.".format(self.klass)
         self.client = client
-        self.endpoint = "{}/{}".format(self._prefix, self.klass.resource_type)
+        self.endpoint = "{}/{}".format(self._prefix,
+                                       self.klass.resource_type.value)
 
     def list(self, no_items=200, **conditions):
         """
@@ -124,10 +137,9 @@ class BaseClient(object):
             List of resources that match conditions.
         """
         endpoint = self.endpoint + "/list"
-        data = {}
         conditions = Resource.normalize(conditions)
-        data["searchFilter"] = self._get_filter(conditions)
-        data["queryLimit"] = self._get_query_limit(no_items)
+        data = dict(searchFilter=self._get_filter(conditions),
+                    queryLimit=self._get_query_limit(no_items))
         resources = self.client.post(endpoint, data, codes.ok)["list"]
         return [self.klass(**r) for r in resources]
 
@@ -164,14 +176,13 @@ class BaseClient(object):
         parameters set in order to be fully functional. These skeletons are
         used in resource creation process.
 
-        In order to make this skeleton useful, ``{REPLACE_ME}`` placeholders
-        need to be replaced by actual, valid data from FCO.
+        In order to make this skeleton useful, ``{PLACEHOLDERS}`` need to be
+        replaced by actual, valid data from FCO.
 
         Returns:
             Skeleton object for resource that client handles.
         """
-        args = ["{REPLACE_ME}"] * self.klass.skeleton_args
-        return self.klass(*args)
+        return self.klass.skeleton()
 
     def delete(self, resource_uuid, cascade=False):
         """
@@ -191,7 +202,7 @@ class BaseClient(object):
             :obj:`Job` resource describing status of the resource.
         """
         endpoint = "{}/{}".format(self.endpoint, resource_uuid)
-        data = {"cascade": cascade}
+        data = dict(cascade=cascade)
         return Job(self.client.delete(endpoint, data, codes.accepted))
 
 
@@ -234,41 +245,8 @@ class Job(Resource):
     .. _`FCO's job page`: http://docs.flexiant.com/display/DOCS/REST+Job
     """
 
-    resource_type = "JOB"
+    resource_type = ResourceType.job
 
     @property
     def status(self):
         return JobStatus(self["status"])
-
-
-class JobClient(BaseClient):
-    """
-    Job client.
-
-    This class groups all operations that can be executed on jobs.
-    """
-
-    klass = Job
-
-    def wait(self, job):
-        while not job.status.is_terminal:
-            time.sleep(3)
-            job = self.get(uuid=job.uuid)
-        return job
-
-    def delete(self, job_uuid, cascade=True):
-        """
-        Delete job.
-
-        Job is deleted synchronously and thus needs it's own delete
-        implementation.
-
-        Args:
-            job_uuid (str): UUID of the job being deleted.
-            cascade (bool): Control whether child resources are also deleted
-                or not. This parameter is ignored and set to ``False``
-                unconditionally.
-        """
-        endpoint = "{}/{}".format(self.endpoint, job_uuid)
-        data = {"cascade": False}
-        self.client.delete(endpoint, data, codes.ok)

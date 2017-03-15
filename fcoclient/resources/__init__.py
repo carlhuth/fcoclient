@@ -12,25 +12,3 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""
-Module with server related functionality.
-"""
-
-from fcoclient.base import BaseClient, Resource, Job
-
-
-class Server(Resource):
-    """
-    Class representing server resource.
-    """
-
-    resource_type = "SERVER"
-
-
-class ServerClient(BaseClient):
-    """
-    Client that provides access to server-specific functionality.
-    """
-
-    klass = Server

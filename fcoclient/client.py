@@ -21,11 +21,11 @@ import requests
 
 from fcoclient import exceptions
 
-from fcoclient.base import JobClient
-from fcoclient.disk import DiskClient
-from fcoclient.product_offer import ProductOfferClient
-from fcoclient.server import ServerClient
-from fcoclient.vdc import VdcClient
+from fcoclient.resources.job import JobClient
+from fcoclient.resources.disk import DiskClient
+from fcoclient.resources.productoffer import ProductOfferClient
+from fcoclient.resources.server import ServerClient
+from fcoclient.resources.vdc import VdcClient
 
 
 class APIClient(object):
@@ -155,6 +155,6 @@ class Client(object):
 
         self.disk = DiskClient(client)
         self.job = JobClient(client)
-        self.product_offer = ProductOfferClient(client)
+        self.productoffer = ProductOfferClient(client)
         self.server = ServerClient(client)
         self.vdc = VdcClient(client)

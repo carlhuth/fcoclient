@@ -13,24 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Module with product offer related functionality.
-"""
+from fcoclient.commands.configure import ConfigureCmd
+from fcoclient.commands.disk import DiskCmd
+from fcoclient.commands.job import JobCmd
+from fcoclient.commands.productoffer import ProductOfferCmd
+from fcoclient.commands.server import ServerCmd
+from fcoclient.commands.vdc import VdcCmd
 
-from fcoclient.base import BaseClient, Resource
-
-
-class ProductOffer(Resource):
-    """
-    Class represening product offer.
-    """
-
-    resource_type = "PRODUCTOFFER"
-
-
-class ProductOfferClient(BaseClient):
-    """
-    Client, providing access to product offers.
-    """
-
-    klass = ProductOffer
+__all__ = [
+    "ConfigureCmd",
+    "DiskCmd",
+    "JobCmd",
+    "ProductOfferCmd",
+    "ServerCmd",
+    "VdcCmd",
+]

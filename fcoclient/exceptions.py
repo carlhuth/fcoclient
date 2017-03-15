@@ -79,3 +79,9 @@ class APICallError(Exception):
 
     def __init__(self, request):
         super(APICallError, self).__init__(request.text)
+
+
+class InvalidConfigError(Exception):
+    """
+    This exception is raised on broken config file.
+    """

@@ -14,23 +14,23 @@
 # limitations under the License.
 
 """
-Module with virtual data center related functionality.
+Module with product offer related functionality.
 """
 
-from fcoclient.base import BaseClient, Resource
+from fcoclient.resources.base import BaseClient, Resource, ResourceType
 
 
-class Vdc(Resource):
+class ProductOffer(Resource):
     """
-    Class represening virtual data center.
-    """
-
-    resource_type = "VDC"
-
-
-class VdcClient(BaseClient):
-    """
-    Client providing access to virtual data centers.
+    Class representing product offer.
     """
 
-    klass = Vdc
+    resource_type = ResourceType.productoffer
+
+
+class ProductOfferClient(BaseClient):
+    """
+    Client, providing access to product offers.
+    """
+
+    klass = ProductOffer
