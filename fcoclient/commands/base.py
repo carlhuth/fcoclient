@@ -110,3 +110,11 @@ class Command(object):
         self.logger.info("Generating item skeleton")
         utils.output_json(self.resource_client.skeleton())
         self.logger.info("Done generating item skeleton")
+
+    def wait_for_termination(self, job, wait):
+        if wait:
+            self.logger.info("Waiting for job to finish")
+            job = self.client.job.wait(job.uuid)
+        utils.output_json(job)
+        msg = "Job {}".format("terminated" if wait else "scheduled")
+        self.logger.info(msg)

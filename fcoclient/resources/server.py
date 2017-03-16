@@ -135,13 +135,3 @@ class ServerClient(BaseClient):
         endpoint = "{}/{}/change_status".format(self.endpoint, uuid)
         data = dict(newStatus=ServerStatus.stopped.value, safe=True)
         return Job(self.client.put(endpoint, data, codes.accepted))
-
-    def wait(self, uuid, status):
-        """
-        Wait for server to reach required status.
-
-        Args:
-            uuid: Server to wait for
-            status: Final status we want to reach
-        """
-        return self.wait_for_condition(uuid, lambda x: x.status == status)

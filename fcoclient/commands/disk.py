@@ -16,7 +16,6 @@
 
 import json
 
-from fcoclient import utils
 from fcoclient.commands.base import Command
 
 
@@ -43,23 +42,9 @@ class DiskCmd(Command):
         self.logger.info("Creating new disk")
         skeleton = json.load(args.skeleton)
         job = self.client.disk.create(skeleton)
-        if args.wait:
-            self.logger.info("Waiting for disk creation to terminate")
-            job = self.client.job.wait(job.uuid)
-            utils.output_json(job)
-            self.logger.info("Disk creation terminated")
-        else:
-            utils.output_json(job)
-            self.logger.info("Disk creation scheduled")
+        self.wait_for_termination(job, args.wait)
 
     def delete(self, args):
         self.logger.info("Deleting disk")
         job = self.client.disk.delete(args.uuid)
-        if args.wait:
-            self.logger.info("Waiting for disk deletion to terminate")
-            job = self.client.job.wait(job.uuid)
-            utils.output_json(job)
-            self.logger.info("Disk deletion terminated")
-        else:
-            utils.output_json(job)
-            self.logger.info("Disk deletion scheduled")
+        self.wait_for_termination(job, args.wait)

@@ -15,9 +15,7 @@
 
 import json
 
-from fcoclient import utils
 from fcoclient.commands.base import Command
-from fcoclient.resources.server import ServerStatus
 
 
 class ServerCmd(Command):
@@ -56,49 +54,19 @@ class ServerCmd(Command):
         skeleton = json.load(args.skeleton)
         keys = [] if args.key_uuid is None else args.key_uuid
         job = self.client.server.create(skeleton, keys)
-        if args.wait:
-            self.logger.info("Waiting for server creation to terminate")
-            job = self.client.job.wait(job.uuid)
-            utils.output_json(job)
-            self.logger.info("Server creation terminated")
-        else:
-            utils.output_json(job)
-            self.logger.info("Server creation scheduled")
+        self.wait_for_termination(job, args.wait)
 
     def delete(self, args):
         self.logger.info("Deleting server")
         job = self.client.server.delete(args.uuid, cascade=args.cascade)
-        if args.wait:
-            self.logger.info("Waiting for server deletion to terminate")
-            job = self.client.job.wait(job.uuid)
-            utils.output_json(job)
-            self.logger.info("Server deletion terminated")
-        else:
-            utils.output_json(job)
-            self.logger.info("Server deletion scheduled")
+        self.wait_for_termination(job, args.wait)
 
     def start(self, args):
         self.logger.info("Starting server")
         job = self.client.server.start(args.uuid)
-        if args.wait:
-            self.logger.info("Waiting for server to start")
-            server = self.client.server.wait(job.monitored_item_uuid,
-                                             ServerStatus.running)
-            utils.output_json(server)
-            self.logger.info("Server started")
-        else:
-            utils.output_json(job)
-            self.logger.info("Server start scheduled")
+        self.wait_for_termination(job, args.wait)
 
     def stop(self, args):
         self.logger.info("Stopping server")
         job = self.client.server.stop(args.uuid)
-        if args.wait:
-            self.logger.info("Waiting for server to stop")
-            server = self.client.server.wait(job.monitored_item_uuid,
-                                             ServerStatus.stopped)
-            utils.output_json(server)
-            self.logger.info("Server stopped")
-        else:
-            utils.output_json(job)
-            self.logger.info("Server stop scheduled")
+        self.wait_for_termination(job, args.wait)
