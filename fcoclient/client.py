@@ -24,6 +24,7 @@ from fcoclient import exceptions
 from fcoclient.resources.disk import DiskClient
 from fcoclient.resources.image import ImageClient
 from fcoclient.resources.job import JobClient
+from fcoclient.resources.nic import NicClient
 from fcoclient.resources.network import NetworkClient
 from fcoclient.resources.productoffer import ProductOfferClient
 from fcoclient.resources.server import ServerClient
@@ -159,6 +160,7 @@ class Client(object):
         self.disk = DiskClient(client)
         self.image = ImageClient(client)
         self.job = JobClient(client)
+        self.nic = NicClient(client)
         self.network = NetworkClient(client)
         self.productoffer = ProductOfferClient(client)
         self.server = ServerClient(client)

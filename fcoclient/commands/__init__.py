@@ -17,6 +17,7 @@ from fcoclient.commands.configure import ConfigureCmd
 from fcoclient.commands.disk import DiskCmd
 from fcoclient.commands.image import ImageCmd
 from fcoclient.commands.job import JobCmd
+from fcoclient.commands.nic import NicCmd
 from fcoclient.commands.network import NetworkCmd
 from fcoclient.commands.productoffer import ProductOfferCmd
 from fcoclient.commands.server import ServerCmd
@@ -28,6 +29,7 @@ __all__ = [
     "DiskCmd",
     "ImageCmd",
     "JobCmd",
+    "NicCmd",
     "NetworkCmd",
     "ProductOfferCmd",
     "ServerCmd",
