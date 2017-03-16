@@ -15,6 +15,7 @@
 
 from fcoclient.commands.configure import ConfigureCmd
 from fcoclient.commands.disk import DiskCmd
+from fcoclient.commands.firewalltemplate import FirewallTemplateCmd
 from fcoclient.commands.image import ImageCmd
 from fcoclient.commands.job import JobCmd
 from fcoclient.commands.nic import NicCmd
@@ -27,6 +28,7 @@ from fcoclient.commands.vdc import VdcCmd
 __all__ = [
     "ConfigureCmd",
     "DiskCmd",
+    "FirewallTemplateCmd",
     "ImageCmd",
     "JobCmd",
     "NicCmd",

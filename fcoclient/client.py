@@ -22,6 +22,7 @@ import requests
 from fcoclient import exceptions
 
 from fcoclient.resources.disk import DiskClient
+from fcoclient.resources.firewalltemplate import FirewallTemplateClient
 from fcoclient.resources.image import ImageClient
 from fcoclient.resources.job import JobClient
 from fcoclient.resources.nic import NicClient
@@ -158,6 +159,7 @@ class Client(object):
         client = APIClient(username, customer, password, url, verify)
 
         self.disk = DiskClient(client)
+        self.firewalltemplate = FirewallTemplateClient(client)
         self.image = ImageClient(client)
         self.job = JobClient(client)
         self.nic = NicClient(client)

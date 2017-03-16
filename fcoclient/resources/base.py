@@ -34,6 +34,7 @@ class ResourceType(enum.Enum):
 
     any = "ANY"
     disk = "DISK"
+    firewalltemplate = "FIREWALL_TEMPLATE"
     image = "IMAGE"
     job = "JOB"
     nic = "NIC"
