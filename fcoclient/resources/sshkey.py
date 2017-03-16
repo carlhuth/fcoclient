@@ -13,22 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fcoclient.commands.configure import ConfigureCmd
-from fcoclient.commands.disk import DiskCmd
-from fcoclient.commands.image import ImageCmd
-from fcoclient.commands.job import JobCmd
-from fcoclient.commands.productoffer import ProductOfferCmd
-from fcoclient.commands.server import ServerCmd
-from fcoclient.commands.sshkey import SshKeyCmd
-from fcoclient.commands.vdc import VdcCmd
+"""
+Module with ssh key related functionality.
+"""
 
-__all__ = [
-    "ConfigureCmd",
-    "DiskCmd",
-    "ImageCmd",
-    "JobCmd",
-    "ProductOfferCmd",
-    "ServerCmd",
-    "SshKeyCmd",
-    "VdcCmd",
-]
+from fcoclient.resources.base import BaseClient, Resource, ResourceType
+
+
+class SshKey(Resource):
+    """
+    Class representing ssh key.
+    """
+
+    resource_type = ResourceType.sshkey
+
+
+class SshKeyClient(BaseClient):
+    """
+    Client providing access to ssh keys.
+    """
+
+    klass = SshKey

@@ -38,6 +38,7 @@ class ResourceType(enum.Enum):
     job = "JOB"
     productoffer = "PRODUCTOFFER"
     server = "SERVER"
+    sshkey = "SSHKEY"
     vdc = "VDC"
 
 

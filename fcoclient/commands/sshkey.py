@@ -13,22 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fcoclient.commands.configure import ConfigureCmd
-from fcoclient.commands.disk import DiskCmd
-from fcoclient.commands.image import ImageCmd
-from fcoclient.commands.job import JobCmd
-from fcoclient.commands.productoffer import ProductOfferCmd
-from fcoclient.commands.server import ServerCmd
-from fcoclient.commands.sshkey import SshKeyCmd
-from fcoclient.commands.vdc import VdcCmd
+from fcoclient.commands.base import Command
 
-__all__ = [
-    "ConfigureCmd",
-    "DiskCmd",
-    "ImageCmd",
-    "JobCmd",
-    "ProductOfferCmd",
-    "ServerCmd",
-    "SshKeyCmd",
-    "VdcCmd",
-]
+
+class SshKeyCmd(Command):
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("sshkey", help="Manage ssh keys")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "ssh key")
+        Command.create_list_parser(subs, "ssh keys")
+
+        return parser
+
+    @property
+    def resource_client(self):
+        return self.client.sshkey

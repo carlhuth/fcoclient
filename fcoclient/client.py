@@ -26,6 +26,7 @@ from fcoclient.resources.image import ImageClient
 from fcoclient.resources.job import JobClient
 from fcoclient.resources.productoffer import ProductOfferClient
 from fcoclient.resources.server import ServerClient
+from fcoclient.resources.sshkey import SshKeyClient
 from fcoclient.resources.vdc import VdcClient
 
 
@@ -159,4 +160,5 @@ class Client(object):
         self.job = JobClient(client)
         self.productoffer = ProductOfferClient(client)
         self.server = ServerClient(client)
+        self.sshkey = SshKeyClient(client)
         self.vdc = VdcClient(client)
