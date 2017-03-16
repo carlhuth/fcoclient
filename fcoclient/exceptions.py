@@ -51,7 +51,7 @@ class NoSuchResourceError(ResourceError):
             conditions (:obj:`dict`): Conditions that were used when querying
                 for resource.
         """
-        msg = "No resource matches {}".format(self.conditions)
+        msg = "No resource matches {}".format(conditions)
         super(NoSuchResourceError, self).__init__(conditions, msg)
 
 
@@ -68,7 +68,7 @@ class NonUniqueResourceError(ResourceError):
             conditions (:obj:`dict`): Conditions that were used when
                 retrieving resource.
         """
-        msg = "More than one resource matches {}".format(self.conditions)
+        msg = "More than one resource matches {}".format(conditions)
         super(NonUniqueResourceError, self).__init__(conditions, msg)
 
 
