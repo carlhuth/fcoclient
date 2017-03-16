@@ -22,6 +22,7 @@ import enum
 from requests import codes
 
 from fcoclient.resources.base import BaseClient, Resource, ResourceType
+from fcoclient.resources.disk import Disk
 from fcoclient.resources.job import Job
 
 
@@ -52,8 +53,11 @@ class Server(Resource):
 
     @staticmethod
     def skeleton():
-        return Server("{SERVER PRODUCT OFFER UUID}", "{SERVER NAME}",
-                      "{VDC UUID}")
+        return Server(
+            "{SERVER PRODUCT OFFER UUID}", "{SERVER NAME}", "{VDC UUID}",
+            disks=[Disk.skeleton()], image="{IMAGE UUID}",
+            sshkeys=[dict(resourceUUID="{SSH KEY UUID}")],
+        )
 
     def __init__(self, productOfferUUID, resourceName, vdcUUID, **rest):
         """
