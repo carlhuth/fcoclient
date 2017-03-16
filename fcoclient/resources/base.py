@@ -270,3 +270,7 @@ class Job(Resource):
     @property
     def status(self):
         return JobStatus(self["status"])
+
+    @property
+    def monitored_item_uuid(self):
+        return self["itemUUID"]
