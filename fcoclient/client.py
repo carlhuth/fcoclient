@@ -24,6 +24,7 @@ from fcoclient import exceptions
 from fcoclient.resources.disk import DiskClient
 from fcoclient.resources.image import ImageClient
 from fcoclient.resources.job import JobClient
+from fcoclient.resources.network import NetworkClient
 from fcoclient.resources.productoffer import ProductOfferClient
 from fcoclient.resources.server import ServerClient
 from fcoclient.resources.sshkey import SshKeyClient
@@ -158,6 +159,7 @@ class Client(object):
         self.disk = DiskClient(client)
         self.image = ImageClient(client)
         self.job = JobClient(client)
+        self.network = NetworkClient(client)
         self.productoffer = ProductOfferClient(client)
         self.server = ServerClient(client)
         self.sshkey = SshKeyClient(client)
