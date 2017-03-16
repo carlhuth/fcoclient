@@ -17,8 +17,6 @@
 Module with job related functionality.
 """
 
-import time
-
 from requests import codes
 
 from fcoclient.resources.base import JobStatus  # noqa
@@ -34,11 +32,17 @@ class JobClient(BaseClient):
 
     klass = Job
 
-    def wait(self, job):
-        while not job.status.is_terminal:
-            time.sleep(3)
-            job = self.get(uuid=job.uuid)
-        return job
+    def wait(self, uuid):
+        """
+        Wait for job to terminate.
+
+        Note that this function does not check if job terminated in error.
+        This is responsibility of the caller.
+
+        Args:
+            uuid: Job to wait for
+        """
+        return self.wait_for_condition(uuid, lambda x: x.status.is_terminal)
 
     def delete(self, uuid, cascade=False):
         """

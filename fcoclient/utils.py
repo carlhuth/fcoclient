@@ -19,6 +19,7 @@ Module with various utility functions.
 
 import json
 import sys
+import time
 
 
 def output_json(data, file=sys.stdout):
@@ -31,3 +32,13 @@ def output_json(data, file=sys.stdout):
             (default: standard output)
     """
     json.dump(data, file, indent=2, separators=(",", ": "), sort_keys=True)
+
+
+def delay(delay_in_secs=5):
+    """
+    Delay that should be inserted between tho calls when polling API.
+
+    Args:
+        delay_in_secs: Delay in seconds (default: 5)
+    """
+    time.sleep(delay_in_secs)

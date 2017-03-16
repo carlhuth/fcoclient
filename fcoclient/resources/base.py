@@ -23,7 +23,7 @@ import enum
 
 from requests import codes
 
-from fcoclient import exceptions
+from fcoclient import exceptions, utils
 
 
 @enum.unique
@@ -204,6 +204,26 @@ class BaseClient(object):
         endpoint = "{}/{}".format(self.endpoint, resource_uuid)
         data = dict(cascade=cascade)
         return Job(self.client.delete(endpoint, data, codes.accepted))
+
+    def wait_for_condition(self, item_uuid, condition):
+        """
+        Waits until item satisfies condition.
+
+        Args:
+            item_uuid: Item UUID that we are monitoring.
+            condition: Callable that takes an item and returns True if
+                condition is satisfied and False oherwise.
+
+        Returns:
+            Item when condition is satisfied.
+        """
+        # TODO: There should probably be some sort of timeout in place here in
+        # order to prevent infinite waiting.
+        item = self.get(uuid=item_uuid)
+        while not condition(item):
+            utils.delay()
+            item = self.get(uuid=item.uuid)
+        return item
 
 
 @enum.unique
