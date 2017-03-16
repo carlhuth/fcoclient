@@ -17,10 +17,30 @@
 Module with server related functionality.
 """
 
+import enum
+
 from requests import codes
 
 from fcoclient.resources.base import BaseClient, Resource, ResourceType
 from fcoclient.resources.job import Job
+
+
+class ServerStatus(enum.Enum):
+    """
+    Valid server statuses.
+    """
+
+    building = "BUILDING"
+    deleting = "DELETING"
+    error = "ERROR"
+    installing = "INSTALLING"
+    migrating = "MIGRATING"
+    rebooting = "REBOOTING"
+    recovery = "RECOVERY"
+    running = "RUNNING"
+    starting = "STARTING"
+    stopped = "STOPPED"
+    stopping = "STOPPING"
 
 
 class Server(Resource):
@@ -55,6 +75,10 @@ class Server(Resource):
             "vdcUUID": vdcUUID,
         }, **rest)
 
+    @property
+    def status(self):
+        return ServerStatus(self["status"])
+
 
 class ServerClient(BaseClient):
     """
@@ -78,3 +102,41 @@ class ServerClient(BaseClient):
         """
         data = {"skeletonServer": skeleton}
         return Job(self.client.post(self.endpoint, data, codes.accepted))
+
+    def start(self, uuid):
+        """
+        Start server.
+
+        Args:
+            uuid: Server's UUID.
+
+        Returns:
+            :obj:`Job`: New job tracking server startup.
+        """
+        endpoint = "{}/{}/change_status".format(self.endpoint, uuid)
+        data = dict(newStatus=ServerStatus.running.value, safe=True)
+        return Job(self.client.put(endpoint, data, codes.accepted))
+
+    def stop(self, uuid):
+        """
+        Stop server.
+
+        Args:
+            uuid: Server's UUID.
+
+        Returns:
+            :obj:`Job`: New job tracking server stopping.
+        """
+        endpoint = "{}/{}/change_status".format(self.endpoint, uuid)
+        data = dict(newStatus=ServerStatus.stopped.value, safe=True)
+        return Job(self.client.put(endpoint, data, codes.accepted))
+
+    def wait(self, uuid, status):
+        """
+        Wait for server to reach required status.
+
+        Args:
+            uuid: Server to wait for
+            status: Final status we want to reach
+        """
+        return self.wait_for_condition(uuid, lambda x: x.status == status)
