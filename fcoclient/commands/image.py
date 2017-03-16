@@ -13,20 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fcoclient.commands.configure import ConfigureCmd
-from fcoclient.commands.disk import DiskCmd
-from fcoclient.commands.image import ImageCmd
-from fcoclient.commands.job import JobCmd
-from fcoclient.commands.productoffer import ProductOfferCmd
-from fcoclient.commands.server import ServerCmd
-from fcoclient.commands.vdc import VdcCmd
+from fcoclient.commands.base import Command
 
-__all__ = [
-    "ConfigureCmd",
-    "DiskCmd",
-    "ImageCmd",
-    "JobCmd",
-    "ProductOfferCmd",
-    "ServerCmd",
-    "VdcCmd",
-]
+
+class ImageCmd(Command):
+
+    @staticmethod
+    def add_subparser(subparsers):
+        parser = subparsers.add_parser("image", help="Inspect images")
+        subs = parser.add_subparsers()
+
+        Command.create_get_parser(subs, "image")
+        Command.create_list_parser(subs, "images")
+
+        return parser
+
+    @property
+    def resource_client(self):
+        return self.client.image

@@ -34,6 +34,7 @@ class ResourceType(enum.Enum):
 
     any = "ANY"
     disk = "DISK"
+    image = "IMAGE"
     job = "JOB"
     productoffer = "PRODUCTOFFER"
     server = "SERVER"

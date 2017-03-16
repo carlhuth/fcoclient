@@ -13,20 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fcoclient.commands.configure import ConfigureCmd
-from fcoclient.commands.disk import DiskCmd
-from fcoclient.commands.image import ImageCmd
-from fcoclient.commands.job import JobCmd
-from fcoclient.commands.productoffer import ProductOfferCmd
-from fcoclient.commands.server import ServerCmd
-from fcoclient.commands.vdc import VdcCmd
+"""
+Module with image related functionality.
+"""
 
-__all__ = [
-    "ConfigureCmd",
-    "DiskCmd",
-    "ImageCmd",
-    "JobCmd",
-    "ProductOfferCmd",
-    "ServerCmd",
-    "VdcCmd",
-]
+from fcoclient.resources.base import BaseClient, Resource, ResourceType
+
+
+class Image(Resource):
+    """
+    Class representing image.
+    """
+
+    resource_type = ResourceType.image
+
+
+class ImageClient(BaseClient):
+    """
+    Client providing access to images.
+    """
+
+    klass = Image
