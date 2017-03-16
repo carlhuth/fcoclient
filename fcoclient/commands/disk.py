@@ -16,6 +16,7 @@
 
 import json
 
+from fcoclient import utils
 from fcoclient.commands.base import Command
 
 
@@ -45,10 +46,10 @@ class DiskCmd(Command):
         if args.wait:
             self.logger.info("Waiting for disk creation to terminate")
             job = self.client.job.wait(job)
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Disk creation terminated")
         else:
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Disk creation scheduled")
 
     def delete(self, args):
@@ -57,8 +58,8 @@ class DiskCmd(Command):
         if args.wait:
             self.logger.info("Waiting for disk deletion to terminate")
             job = self.client.job.wait(job)
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Disk deletion terminated")
         else:
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Disk deletion scheduled")

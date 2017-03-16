@@ -15,6 +15,7 @@
 
 import json
 
+from fcoclient import utils
 from fcoclient.commands.base import Command
 
 
@@ -44,10 +45,10 @@ class ServerCmd(Command):
         if args.wait:
             self.logger.info("Waiting for server creation to terminate")
             job = self.client.job.wait(job)
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Server creation terminated")
         else:
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Server creation scheduled")
 
     def delete(self, args):
@@ -56,8 +57,8 @@ class ServerCmd(Command):
         if args.wait:
             self.logger.info("Waiting for server deletion to terminate")
             job = self.client.job.wait(job)
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Server deletion terminated")
         else:
-            self.display(job)
+            utils.output_json(job)
             self.logger.info("Server deletion scheduled")

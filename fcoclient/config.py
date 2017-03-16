@@ -15,6 +15,7 @@
 
 import json
 
+from fcoclient import utils
 from fcoclient.exceptions import InvalidConfigError
 
 
@@ -34,7 +35,7 @@ class Config(dict):
 
     def save(self, path):
         with open(path, "w") as f:
-            json.dump(self, f, indent=2)
+            utils.output_json(self, f)
 
     # Construction helper
     @staticmethod

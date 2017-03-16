@@ -20,8 +20,9 @@ Basic command line helpers.
 from __future__ import print_function
 
 import argparse
-import json
 import sys
+
+from fcoclient import utils
 
 
 class Command(object):
@@ -80,10 +81,6 @@ class Command(object):
                             help="Delete dependent resources")
         return parser
 
-    @staticmethod
-    def display(item):
-        print(json.dumps(item, indent=2, sort_keys=True))
-
     def __init__(self, client, logger):
         self.client = client
         self.logger = logger
@@ -106,10 +103,10 @@ class Command(object):
 
     def get(self, args):
         self.logger.info("Getting item details")
-        self.display(self.resource_client.get(uuid=args.uuid))
+        utils.output_json(self.resource_client.get(uuid=args.uuid))
         self.logger.info("Item details retrieved")
 
     def skeleton(self, _):
         self.logger.info("Generating item skeleton")
-        self.display(self.resource_client.skeleton())
+        utils.output_json(self.resource_client.skeleton())
         self.logger.info("Done generating item skeleton")
