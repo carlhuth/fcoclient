@@ -55,7 +55,7 @@ class ServerCmd(Command):
         job = self.client.server.create(skeleton)
         if args.wait:
             self.logger.info("Waiting for server creation to terminate")
-            job = self.client.job.wait(job)
+            job = self.client.job.wait(job.uuid)
             utils.output_json(job)
             self.logger.info("Server creation terminated")
         else:
@@ -67,7 +67,7 @@ class ServerCmd(Command):
         job = self.client.server.delete(args.uuid, cascade=args.cascade)
         if args.wait:
             self.logger.info("Waiting for server deletion to terminate")
-            job = self.client.job.wait(job)
+            job = self.client.job.wait(job.uuid)
             utils.output_json(job)
             self.logger.info("Server deletion terminated")
         else:

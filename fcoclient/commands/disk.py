@@ -45,7 +45,7 @@ class DiskCmd(Command):
         job = self.client.disk.create(skeleton)
         if args.wait:
             self.logger.info("Waiting for disk creation to terminate")
-            job = self.client.job.wait(job)
+            job = self.client.job.wait(job.uuid)
             utils.output_json(job)
             self.logger.info("Disk creation terminated")
         else:
@@ -57,7 +57,7 @@ class DiskCmd(Command):
         job = self.client.disk.delete(args.uuid)
         if args.wait:
             self.logger.info("Waiting for disk deletion to terminate")
-            job = self.client.job.wait(job)
+            job = self.client.job.wait(job.uuid)
             utils.output_json(job)
             self.logger.info("Disk deletion terminated")
         else:
