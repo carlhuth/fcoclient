@@ -87,7 +87,7 @@ class ServerClient(BaseClient):
 
     klass = Server
 
-    def create(self, skeleton):
+    def create(self, skeleton, ssh_key_uuids):
         """
         Create new server.
 
@@ -96,11 +96,12 @@ class ServerClient(BaseClient):
 
         Args:
             skeleton (:obj:`Server`): Server skeleton.
+            sshkeys (optional): List of ssh key UUIDs
 
         Returns:
            :obj:`Job`: New job, describing creation progress.
         """
-        data = {"skeletonServer": skeleton}
+        data = dict(skeletonServer=skeleton, sshKeyUUIDList=ssh_key_uuids)
         return Job(self.client.post(self.endpoint, data, codes.accepted))
 
     def start(self, uuid):

@@ -30,7 +30,9 @@ class ServerCmd(Command):
         Command.create_get_parser(subs, "server")
         Command.create_list_parser(subs, "servers")
         Command.create_skeleton_parser(subs, "server")
-        Command.create_new_parser(subs, "server")
+        sub = Command.create_new_parser(subs, "server")
+        sub.add_argument("-k", "--key-uuid", action="append",
+                         help="UUID of the ssh key to install on server")
         Command.create_delete_parser(subs, "server")
 
         sub = subs.add_parser("start", help="Start server")
@@ -52,7 +54,8 @@ class ServerCmd(Command):
     def create(self, args):
         self.logger.info("Creating new server")
         skeleton = json.load(args.skeleton)
-        job = self.client.server.create(skeleton)
+        keys = [] if args.key_uuid is None else args.key_uuid
+        job = self.client.server.create(skeleton, keys)
         if args.wait:
             self.logger.info("Waiting for server creation to terminate")
             job = self.client.job.wait(job.uuid)
