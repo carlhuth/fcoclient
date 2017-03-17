@@ -35,13 +35,11 @@ class ServerCmd(Command):
 
         sub = subs.add_parser("start", help="Start server")
         sub.add_argument("uuid", help="UUID of the server")
-        sub.add_argument("-w", "--wait", action="store_true",
-                         help="Wait for server to start")
+        Command.add_wait_argument(sub, "Wait for server to start")
 
         sub = subs.add_parser("stop", help="Stop server")
         sub.add_argument("uuid", help="UUID of the server")
-        sub.add_argument("-w", "--wait", action="store_true",
-                         help="Wait for server to stop")
+        Command.add_wait_argument(sub, "Wait for server to stop")
 
         return parser
 

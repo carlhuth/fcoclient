@@ -61,13 +61,16 @@ class Command(object):
         return parser
 
     @staticmethod
+    def add_wait_argument(parser, help):
+        parser.add_argument("-w", "--wait", action="store_true", help=help)
+
+    @staticmethod
     def create_new_parser(subparsers, item_name):
         msg = "Create new {}".format(item_name)
         parser = subparsers.add_parser("create", help=msg)
         parser.add_argument("skeleton", type=argparse.FileType("r"),
                             help="Skeleton file")
-        parser.add_argument("-w", "--wait", action="store_true",
-                            help="Wait for creation to terminate")
+        Command.add_wait_argument(parser, "Wait for creation to terminate")
         return parser
 
     @staticmethod
@@ -75,8 +78,7 @@ class Command(object):
         msg = "Delete {}".format(item_name)
         parser = subparsers.add_parser("delete", help=msg)
         parser.add_argument("uuid", help="UUID of the {}".format(item_name))
-        parser.add_argument("-w", "--wait", action="store_true",
-                            help="Wait for deletion to terminate")
+        Command.add_wait_argument(parser, "Wait for deletion to terminate")
         parser.add_argument("-c", "--cascade", action="store_true",
                             help="Delete dependent resources")
         return parser
