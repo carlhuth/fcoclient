@@ -88,3 +88,18 @@ class FirewallTemplateClient(BaseClient):
         """
         data = dict(skeletonFirewallTemplate=skeleton)
         return Job(self.client.post(self.endpoint, data, codes.accepted))
+
+    def apply(self, uuid, address):
+        """
+        Apply firewall template to selected address.
+
+        Args:
+            uuid: Firewall template UUID
+            address: IP address that template is applied to
+
+        Returns:
+            :obj:`Job`: New job, tracking application progress.
+        """
+        data = dict(ipAddress=address)
+        endpoint = "{}/{}/apply".format(self.endpoint, uuid)
+        return Job(self.client.put(endpoint, data, codes.accepted))

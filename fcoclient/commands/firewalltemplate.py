@@ -32,6 +32,12 @@ class FirewallTemplateCmd(Command):
         Command.create_new_parser(subs, "firewall template")
         Command.create_delete_parser(subs, "firewall template")
 
+        sub = subs.add_parser("apply",
+                              help="Apply firewall template to address")
+        sub.add_argument("uuid", help="UUID of the server")
+        sub.add_argument("address", help="IP address to apply to")
+        Command.add_wait_argument(sub, "Wait for firewall template to apply")
+
         return parser
 
     @property
@@ -48,4 +54,10 @@ class FirewallTemplateCmd(Command):
         self.logger.info("Deleting firewall template")
         job = self.client.firewalltemplate.delete(args.uuid,
                                                   cascade=args.cascade)
+        self.wait_for_termination(job, args.wait)
+
+    def apply(self, args):
+        msg = "Applying firewall template {} to ip {}"
+        self.logger.info(msg.format(args.uuid, args.address))
+        job = self.client.firewalltemplate.apply(args.uuid, args.address)
         self.wait_for_termination(job, args.wait)
