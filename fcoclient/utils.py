@@ -17,6 +17,7 @@
 Module with various utility functions.
 """
 
+import getpass
 import json
 import sys
 import time
@@ -42,3 +43,20 @@ def delay(delay_in_secs=5):
         delay_in_secs: Delay in seconds (default: 5)
     """
     time.sleep(delay_in_secs)
+
+
+def prompt(text, is_password=False):
+    """
+    Interactively prompt user for input.
+
+    Args:
+        text: Text that should be displayed to user
+        is_password: Set to True in order to avoid echoing the password
+    """
+    text += ": "
+    if is_password:
+        return getpass.getpass(text)
+    if sys.version_info[0] > 2:
+        return input(text)
+    else:
+        return raw_input(text)

@@ -20,6 +20,8 @@ import inspect
 import logging
 import sys
 
+from requests.exceptions import RequestException
+
 from fcoclient import commands
 from fcoclient.client import Client
 from fcoclient.config import Config
@@ -96,6 +98,6 @@ def main():
 
     try:
         getattr(args.cls(client, logger), args.command)(args)
-    except APICallError as e:
+    except (APICallError, RequestException) as e:
         print("ERROR: {}".format(e), file=sys.stderr)
         sys.exit(1)

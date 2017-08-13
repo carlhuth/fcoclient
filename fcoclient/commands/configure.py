@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fcoclient import utils
+from fcoclient.client import Client
 from fcoclient.commands.base import Command
 from fcoclient.config import Config
 
@@ -24,15 +26,27 @@ class ConfigureCmd(Command):
     @staticmethod
     def add_subparser(subparsers):
         parser = subparsers.add_parser("configure", help="Configure client")
-        parser.add_argument("url", help="FCO URL")
-        parser.add_argument("username", help="FCO username")
-        parser.add_argument("customer", help="FCO customer")
-        parser.add_argument("password", help="FCO password")
+        parser.add_argument("-a", "--url", help="FCO URL")
+        parser.add_argument("-u", "--username", help="FCO username")
+        parser.add_argument("-c", "--customer", help="FCO customer")
         return parser
 
     def configure(self, args):
         self.logger.info("Configuring client")
-        config = Config(url=args.url, username=args.username,
-                        customer=args.customer, password=args.password)
+
+        url = args.url if args.url else utils.prompt("FCO URL")
+        username = (
+            args.username if args.username else utils.prompt("FCO username")
+        )
+        customer = (
+            args.customer if args.customer else utils.prompt("FCO customer")
+        )
+        password = utils.prompt("FCO password", is_password=True)
+        config = Config(url=url, username=username, customer=customer,
+                        password=password)
+
+        self.logger.info("Testing client configuration")
+        Client(**config).vdc.list()
+
         config.save(args.config)
         self.logger.info("Client configured")
