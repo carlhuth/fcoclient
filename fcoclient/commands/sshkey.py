@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+
 from fcoclient.commands.base import Command
 
 
@@ -25,9 +27,23 @@ class SshKeyCmd(Command):
 
         Command.create_get_parser(subs, "ssh key")
         Command.create_list_parser(subs, "ssh keys")
+        Command.create_skeleton_parser(subs, "ssh key")
+        Command.create_new_parser(subs, "ssh key")
+        Command.create_delete_parser(subs, "ssh key")
 
         return parser
 
     @property
     def resource_client(self):
         return self.client.sshkey
+
+    def create(self, args):
+        self.logger.info("Creating new SSH key")
+        skeleton = json.load(args.skeleton)
+        job = self.client.sshkey.create(skeleton)
+        self.wait_for_termination(job, args.wait)
+
+    def delete(self, args):
+        self.logger.info("Deleting SSH key")
+        job = self.client.sshkey.delete(args.uuid)
+        self.wait_for_termination(job, args.wait)
