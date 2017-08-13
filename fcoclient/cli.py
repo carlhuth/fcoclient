@@ -25,7 +25,7 @@ from requests.exceptions import RequestException
 from fcoclient import commands
 from fcoclient.client import Client
 from fcoclient.config import Config
-from fcoclient.exceptions import InvalidConfigError, APICallError
+from fcoclient.exceptions import InvalidConfigError, FCOError
 
 
 def _configure_logging():
@@ -94,10 +94,12 @@ def main():
             client = Client(**Config.load_from_file(args.config))
         except InvalidConfigError as e:
             print("ERROR: {}".format(e), file=sys.stderr)
-            sys.exit(1)
+            return 1
 
     try:
         getattr(args.cls(client, logger), args.command)(args)
-    except (APICallError, RequestException) as e:
-        print("ERROR: {}".format(e), file=sys.stderr)
-        sys.exit(1)
+    except (FCOError, RequestException) as e:
+        logger.error(e)
+        return 1
+
+    return 0

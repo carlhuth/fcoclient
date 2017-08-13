@@ -18,7 +18,13 @@ Exceptions that are raised by fcoclient library during operation.
 """
 
 
-class ResourceError(Exception):
+class FCOError(Exception):
+    """
+    Base exception for all other exceptions in fco client library.
+    """
+
+
+class ResourceError(FCOError):
     """
     Base exception for resource retrieval.
     """
@@ -72,7 +78,7 @@ class NonUniqueResourceError(ResourceError):
         super(NonUniqueResourceError, self).__init__(conditions, msg)
 
 
-class APICallError(Exception):
+class APICallError(FCOError):
     """
     This exception is raised on http client errors.
     """
@@ -81,7 +87,7 @@ class APICallError(Exception):
         super(APICallError, self).__init__(request.text)
 
 
-class InvalidConfigError(Exception):
+class InvalidConfigError(FCOError):
     """
     This exception is raised on broken config file.
     """

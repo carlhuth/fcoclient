@@ -23,6 +23,7 @@ import argparse
 import sys
 
 from fcoclient import utils
+from fcoclient.exceptions import FCOError
 
 
 class Command(object):
@@ -93,8 +94,7 @@ class Command(object):
         try:
             return dict(f.split("=", 1) for f in filter_conditions)
         except ValueError:
-            self.logger.error("Malformed filter. Must be in key=value form.")
-            sys.exit(1)
+            raise FCOError("Malformed filter. Must be in key=value form.")
 
     def list(self, args):
         self.logger.info("Listing items")
@@ -120,3 +120,5 @@ class Command(object):
         utils.output_json(job)
         msg = "Job {}".format("terminated" if wait else "scheduled")
         self.logger.info(msg)
+        if job.status.marks_failure:
+            raise FCOError(job["info"])
