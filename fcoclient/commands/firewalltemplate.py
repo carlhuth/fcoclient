@@ -34,7 +34,7 @@ class FirewallTemplateCmd(Command):
 
         sub = subs.add_parser("apply",
                               help="Apply firewall template to address")
-        sub.add_argument("uuid", help="UUID of the server")
+        sub.add_argument("uuid", help="UUID of the firewall template")
         sub.add_argument("address", help="IP address to apply to")
         Command.add_wait_argument(sub, "Wait for firewall template to apply")
 
